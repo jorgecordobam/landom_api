@@ -1,0 +1,71 @@
+# Docker Compose para Landom API
+# Email: nuovaiapps@gmail.com
+# Autor: Jorge Cordoba
+
+version: '3.8'
+
+services:
+  # Aplicación Laravel
+  app:
+    build: .
+    container_name: landom-api-app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./storage:/var/www/storage
+      - ./bootstrap/cache:/var/www/bootstrap/cache
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_HOST=mysql
+      - DB_DATABASE=landom_api
+      - DB_USERNAME=landom_user
+      - DB_PASSWORD=Land0m2024!
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - landom-network
+
+  # Base de datos MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: landom-api-mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=Land0mR00t2024!
+      - MYSQL_DATABASE=landom_api
+      - MYSQL_USER=landom_user
+      - MYSQL_PASSWORD=Land0m2024!
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/sql:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      - landom-network
+
+  # Redis para caché y sesiones
+  redis:
+    image: redis:7-alpine
+    container_name: landom-api-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - landom-network
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  landom-network:
+    driver: bridge 
