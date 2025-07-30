@@ -29,10 +29,10 @@ try {
 }
 
 # Variables de configuracion
-$AWS_REGION = "us-west-2"
-$KEY_PAIR_NAME = "landom-key-pair"
+$AWS_REGION = "us-east-2"
+$KEY_PAIR_NAME = "landom-api-key-2"
 $INSTANCE_TYPE = "t2.micro"
-$DOMAIN = "landom-api.us-west-2.elasticbeanstalk.com"
+$DOMAIN = "landom-api.us-east-2.elasticbeanstalk.com"
 
 Write-Host "Configuracion:" -ForegroundColor Yellow
 Write-Host "  Region: $AWS_REGION" -ForegroundColor Cyan
@@ -78,7 +78,8 @@ try {
 # Paso 3: Crear instancia EC2
 Write-Host "Paso 3: Creando instancia EC2..." -ForegroundColor Yellow
 try {
-    $INSTANCE_ID = aws ec2 run-instances --image-id ami-0c02fb55956c7d316 --count 1 --instance-type $INSTANCE_TYPE --key-name $KEY_PAIR_NAME --security-group-ids $SG_ID --region $AWS_REGION --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=landom-api}]" --query 'Instances[0].InstanceId' --output text
+    # Ubuntu Server 22.04 LTS (HVM), SSD Volume Type, us-east-2: ami-0e83be366243f524a (julio 2025)
+    $INSTANCE_ID = aws ec2 run-instances --image-id ami-0e83be366243f524a --count 1 --instance-type $INSTANCE_TYPE --key-name $KEY_PAIR_NAME --security-group-ids $SG_ID --region $AWS_REGION --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=landom-api}]" --query 'Instances[0].InstanceId' --output text
     Write-Host "Instancia creada: $INSTANCE_ID" -ForegroundColor Green
     
     # Esperar a que la instancia este running
